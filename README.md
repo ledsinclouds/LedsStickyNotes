@@ -1,5 +1,5 @@
-SickyNotes Module inspired by bigemployee's Big-Sticky-Notes Module and using Doctrine2 & JQuery
-======================================
+LedsSickyNotes
+==============
 
 ##Introduction
 
