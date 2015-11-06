@@ -1,0 +1,27 @@
+{
+    "name": "ledsinclouds/leds-sticky-notes",
+    "description": "SickyNotes Module inspired by bigemployee's Big-Sticky-Notes Module and using Doctrine2 & JQuery",
+    "type": "library",
+    "license": "BSD-3-Clause",
+    "keywords": [
+        "framework",
+        "zf2"
+    ],
+    "homepage": "https://github.com/ledsinclouds/LedsStickyNotes.git",
+    "minimum-stability": "dev",
+    "repositories": [
+		{
+			"type": "vcs", 
+			"url": "https://github.com/ledsinclouds/LedsStickyNotes.git"
+		}
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "doctrine/doctrine-orm-module": "0.*"	
+    },
+    "autoload": {
+        "psr-0": {
+            "LedsStickyNotes\\": "src/"
+        }
+    }
+}   

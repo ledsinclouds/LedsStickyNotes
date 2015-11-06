@@ -1,0 +1,87 @@
+<?php 
+echo $this->headLink()->appendStylesheet($this->basePath('css/StickyNotes.css'));
+$form = $this->form;
+$titleField = $form->get('collection');
+$url = $this->url('sticky-notes-collection-view', array('note' => $title));
+?>
+
+<?php $this->headScript()->captureStart(); ?>
+    var url = '<?php echo $title ?>';
+<?php $this->headScript()->captureEnd(); ?>
+
+<h1>Title: <?php echo str_replace("-", " ", ucfirst($title)); ?></h1>
+<hr>
+<div class="row">
+    <div class="sticky" style="position: relative; width: 100%">
+        <?php echo $this->form()->openTag($form); ?>
+            <?php $titleField = $form->get('collection'); ?>
+            <?php echo $this->formElement($titleField->get('notes')); ?>
+            <div id="create">+</div>
+        <?php echo $this->form()->closeTag($form); ?>
+    </div>
+    <div class="clear-both"></div>
+</div>
+<script>
+
+(function(){
+    $('#collection-form input').each(function(index, val){
+        var input = $(this);
+        var inputId = input.val();
+        $(input).next().attr('id', 'stickynote-' + inputId)
+                .parent().append('<a id="remove-' + inputId + '" class="delete-sticky" href="#">X</a>');
+    });
+
+    $('#create').on('click', function(event){
+        event.preventDefault();
+        var $stickynote = $(this);
+        $.post( url + '/add', null, function(data){
+            if(data.response == true){
+                $('#sticky-notes').append(
+                    '<fieldset class="sticky-note">' +
+                    '<textarea id="stickynote-' + data.note_id + '" name="note">' +
+                    '</textarea>' +
+                    '<a id="remove-' + data.note_id + '" class="delete-sticky" href="#">X</a>' +
+                    '</fieldset>'
+                );
+            }
+        }, 'json');    
+    });
+
+    $('#sticky-notes').on('keyup', 'textarea', function(event){
+        event.preventDefault();
+        var $stickynote = $(this);
+        var update_id = $stickynote.attr('id');
+        var update_content = $stickynote.val();
+        update_id = update_id.replace("stickynote-", "");
+
+        $.post( url + '/update',{
+            id: update_id,
+            note: update_content
+        },
+        function(data){
+            if(data.response == false){
+                console.log('could not update');
+            }
+        }, 'json');
+        console.log(event);
+    });   
+
+    $('#sticky-notes').on('click', 'a.delete-sticky', function(event){
+        event.preventDefault();
+        var $stickynote = $(this);
+        var remove_id = $(this).attr('id');
+        remove_id = remove_id.replace("remove-", "");
+        $.post( url + '/delete', {
+            id: remove_id
+        },
+        function(data){
+            if(data.response == true){
+                $stickynote.parent().remove();
+            }else{
+                console.log('could not remove ');
+            }
+        }, 'json');
+    }); 
+})();
+
+</script>

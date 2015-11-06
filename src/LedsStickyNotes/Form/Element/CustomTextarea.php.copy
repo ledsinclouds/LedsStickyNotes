@@ -1,0 +1,12 @@
+<?php
+namespace CustomStickyNotes\Form\Element;
+
+use Zend\Form\Element;
+
+class CustomTextarea extends Element{
+
+	protected $attributes = array(
+		'text' => 'textarea'
+	);
+
+}

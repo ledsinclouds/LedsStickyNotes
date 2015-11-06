@@ -1,0 +1,77 @@
+<?php 
+echo $this->headLink()->appendStylesheet($this->basePath('css/StickyNotes.css'));
+?>
+<h1>StickyNotes: With a View Helper</h1>
+<hr>
+<div class='sticky' style="position: relative; width: 100%">
+    <div id="sticky-notes">
+        <?php foreach ($stickynotes as $stickynote): ?>
+            <div id="sticky-note-<?php echo $stickynote->getId() ?>" class="sticky-note">
+                <?php $element->setAttribute('text', array($stickynote->getNote())); ?>
+                <?php echo $this->simpleTextarea($element); ?>
+                <a id="remove-<?php echo $stickynote->getId() ?>" class="delete-sticky" href="#">X</a>
+            </div>
+        <?php endforeach; ?>
+        <div id="create">+</div>
+    </div>
+    <div class="clear-both"></div>
+</div>
+
+<?php $this->inlineScript()->captureStart(); ?>
+    <?php $element->setAttribute('text', array('' => '')); ?>
+    var template = '<?php echo $this->simpleTextarea($element); ?>';
+<?php $this->inlineScript()->captureEnd(); ?>
+
+<script>
+
+(function(){	
+
+    $('#create').on('click', function(event){
+        event.preventDefault();
+        var $stickynote = $(this);
+
+        $.post('simple/add', null, function(data){
+            if(data.response == true){
+                $stickynote.before("<div id=\"sticky-note-"+data.new_note_id+"\" class=\"sticky-note\">" + template + "<a id=\"remove-"+data.new_note_id+"\" class=\"delete-sticky\" href=\"#\">X</a></div>");
+            }
+        }, 'json');
+    });
+    
+    $('#sticky-notes').on('keyup', 'textarea', function(event){
+		event.preventDefault();
+		var $stickynotes = $(this);
+		var update_id = $stickynotes.parent().attr('id');
+		var update_content = $stickynotes.val();
+		update_id = update_id.replace("sticky-note-", "");
+		$.post('simple/update', {
+			id: update_id,
+			note: update_content
+		},
+		function(data){
+			if(data.response == false){
+				console.log('could not update');
+			}
+		}, 'json');
+	});
+	
+    $('#sticky-notes').on('click', 'a.delete-sticky', function(event){
+        event.preventDefault();
+        var $stickynote = $(this);
+        var remove_id = $(this).attr('id');
+        remove_id = remove_id.replace("remove-","");
+
+        $.post('simple/remove', {
+            id:remove_id
+        },
+        function(data){
+            if(data.response == true){
+                $stickynote.parent().remove();
+            }else{
+                console.log('could not remove ');
+            }
+        }, 'json');
+    }); 	
+    
+})();
+
+</script>

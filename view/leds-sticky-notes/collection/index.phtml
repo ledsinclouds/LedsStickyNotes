@@ -1,0 +1,27 @@
+<?php 
+echo $this->headLink()->appendStylesheet($this->basePath('css/StickyNotes.css'));
+$form = $this->form;
+$form->setAttribute('action', $this->url('sticky-notes-collection', array('action' => 'index')))->prepare($form);
+?>
+<h1>StickyNotes: Collection Form Element</h1>
+<hr>
+<div class='row'>
+    <?php 
+        echo $this->form()->openTag($form);
+        $title = $form->get('collection');
+        echo $this->formRow($title->get('id'));
+        echo $this->formRow($title->get('title'));
+        echo $this->formRow($form->get('submit'));
+        echo $this->form()->closeTag();
+    ?>
+</div>
+<h2>Collection List</h2>
+<ul id="title">
+    <?php foreach($titles as $title): ?>
+        <li>
+			<a id="title-<?php echo $title->getId(); ?>" href="<?php echo $this->url('sticky-notes-collection-view', array('note' => $title->getTitle() )); ?>">
+				<?php echo str_replace("-", " ", ucfirst($title->getTitle())); ?>
+			</a>
+		</li>
+    <?php endforeach; ?>
+</ul>
